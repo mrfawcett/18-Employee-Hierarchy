@@ -1,0 +1,7 @@
+[
+ {"test": "HourlyEmployeeTest", "name": "HourlyEmployee: constructor, getters, getEmployeeInfo",                    "points": 15},
+ {"test": "OvertimePayTest",    "name": "HourlyEmployee.calculatePay with overtime past 40 hours",                 "points": 15},
+ {"test": "ManagerTest",        "name": "Manager: constructor, getters, calculatePay, getEmployeeInfo",             "points": 20},
+ {"test": "CanSuperviseTest",   "name": "canSupervise with instanceof (Manager) and its override (Executive)",     "points": 25},
+ {"test": "ExecutiveTest",      "name": "Executive: constructor, getStockOptions, calculatePay via super, getEmployeeInfo", "points": 25}
+]

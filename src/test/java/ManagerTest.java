@@ -2,189 +2,99 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ManagerTest {
-    
-    @DisplayName("Constructor Test 1")
+
+    @DisplayName("constructor: new Manager(\"Carol\", 201, 80000.0, \"Sales\", 0.15) passes name, ID, and salary up to Employee")
     @Test
     void constructor_Test01() {
         Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        assertNotNull(mgr);
+        assertEquals("Carol", mgr.getName(), "name should reach Employee through super(...)");
+        assertEquals(201, mgr.getEmployeeID(), "ID should reach Employee through super(...)");
+        assertEquals(80000.0, mgr.getBaseSalary(), 0.01, "salary should reach Employee through super(...)");
     }
-    
-    @DisplayName("Constructor Test 2")
+
+    @DisplayName("constructor: stores the department - getDepartment() is \"Sales\"")
     @Test
     void constructor_Test02() {
-        Manager mgr1 = new Manager("Dave", 202, 85000.0, "IT", 0.20);
-        Manager mgr2 = new Manager("Eve", 203, 90000.0, "Marketing", 0.10);
-        assertNotNull(mgr1);
-        assertNotNull(mgr2);
+        Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
+        assertEquals("Sales", mgr.getDepartment(), "the department belongs in Manager's own field");
     }
-    
-    @DisplayName("getDepartment Test 1")
+
+    @DisplayName("constructor: stores the bonus percent - getBonusPercent() is 0.15")
+    @Test
+    void constructor_Test03() {
+        Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
+        assertEquals(0.15, mgr.getBonusPercent(), 0.001, "the bonus percent belongs in Manager's own field");
+    }
+
+    @DisplayName("getDepartment: Dave -> \"IT\"; two managers keep separate departments")
     @Test
     void getDepartment_Test01() {
-        Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        String expected = "Sales";
-        String result = mgr.getDepartment();
-        assertEquals(expected, result);
+        Manager mgr1 = new Manager("Dave", 202, 85000.0, "IT", 0.20);
+        Manager mgr2 = new Manager("Eve", 203, 90000.0, "Marketing", 0.10);
+        assertEquals("IT", mgr1.getDepartment());
+        assertEquals("Marketing", mgr2.getDepartment(), "creating Eve must not change Dave - fields must not be static");
+        assertEquals("IT", mgr1.getDepartment());
     }
-    
-    @DisplayName("getDepartment Test 2")
-    @Test
-    void getDepartment_Test02() {
-        Manager mgr = new Manager("Dave", 202, 85000.0, "IT", 0.20);
-        String expected = "IT";
-        String result = mgr.getDepartment();
-        assertEquals(expected, result);
-    }
-    
-    @DisplayName("getDepartment Test 3")
-    @Test
-    void getDepartment_Test03() {
-        Manager mgr = new Manager("Eve", 203, 90000.0, "Marketing", 0.10);
-        String expected = "Marketing";
-        String result = mgr.getDepartment();
-        assertEquals(expected, result);
-    }
-    
-    @DisplayName("getBonusPercent Test 1")
+
+    @DisplayName("getBonusPercent: Dave -> 0.2, Eve -> 0.1")
     @Test
     void getBonusPercent_Test01() {
-        Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        double expected = 0.15;
-        double result = mgr.getBonusPercent();
-        assertEquals(expected, result, 0.001);
+        Manager mgr1 = new Manager("Dave", 202, 85000.0, "IT", 0.20);
+        Manager mgr2 = new Manager("Eve", 203, 90000.0, "Marketing", 0.10);
+        assertEquals(0.20, mgr1.getBonusPercent(), 0.001);
+        assertEquals(0.10, mgr2.getBonusPercent(), 0.001);
     }
-    
-    @DisplayName("getBonusPercent Test 2")
-    @Test
-    void getBonusPercent_Test02() {
-        Manager mgr = new Manager("Dave", 202, 85000.0, "IT", 0.20);
-        double expected = 0.20;
-        double result = mgr.getBonusPercent();
-        assertEquals(expected, result, 0.001);
-    }
-    
-    @DisplayName("getBonusPercent Test 3")
-    @Test
-    void getBonusPercent_Test03() {
-        Manager mgr = new Manager("Eve", 203, 90000.0, "Marketing", 0.10);
-        double expected = 0.10;
-        double result = mgr.getBonusPercent();
-        assertEquals(expected, result, 0.001);
-    }
-    
-    @DisplayName("calculatePay Test 1")
+
+    @DisplayName("calculatePay: Carol 80000.0 at 15% -> 92000.0")
     @Test
     void calculatePay_Test01() {
         Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        double expected = 92000.0;
-        double result = mgr.calculatePay();
-        assertEquals(expected, result, 0.01);
+        assertEquals(92000.0, mgr.calculatePay(), 0.01, "80000 + 80000 * 0.15 - the bonus is ADDED to the salary");
     }
-    
-    @DisplayName("calculatePay Test 2")
+
+    @DisplayName("calculatePay: Dave 85000.0 at 20% -> 102000.0")
     @Test
     void calculatePay_Test02() {
         Manager mgr = new Manager("Dave", 202, 85000.0, "IT", 0.20);
-        double expected = 102000.0;
-        double result = mgr.calculatePay();
-        assertEquals(expected, result, 0.01);
+        assertEquals(102000.0, mgr.calculatePay(), 0.01, "85000 + 17000");
     }
-    
-    @DisplayName("calculatePay Test 3")
+
+    @DisplayName("calculatePay: Eve 90000.0 at 10% -> 99000.0")
     @Test
     void calculatePay_Test03() {
         Manager mgr = new Manager("Eve", 203, 90000.0, "Marketing", 0.10);
-        double expected = 99000.0;
-        double result = mgr.calculatePay();
-        assertEquals(expected, result, 0.01);
+        assertEquals(99000.0, mgr.calculatePay(), 0.01, "90000 + 9000");
     }
-    
-    @DisplayName("calculatePay Test 4")
+
+    @DisplayName("calculatePay: Frank 100000.0 at 25% -> 125000.0")
     @Test
     void calculatePay_Test04() {
         Manager mgr = new Manager("Frank", 204, 100000.0, "Finance", 0.25);
-        double expected = 125000.0;
-        double result = mgr.calculatePay();
-        assertEquals(expected, result, 0.01);
+        assertEquals(125000.0, mgr.calculatePay(), 0.01, "100000 + 25000");
     }
-    
-    @DisplayName("getEmployeeInfo Test 1")
+
+    @DisplayName("calculatePay: a 0.0 bonus percent pays exactly the base salary (90000.0)")
+    @Test
+    void calculatePay_Test05() {
+        Manager mgr = new Manager("Gus", 205, 90000.0, "Facilities", 0.0);
+        assertEquals(90000.0, mgr.calculatePay(), 0.01, "90000 + 90000 * 0 - returning only the bonus gives 0.0 here");
+    }
+
+    @DisplayName("getEmployeeInfo: Carol -> \"Carol (ID: 201) - Manager of Sales\"")
     @Test
     void getEmployeeInfo_Test01() {
         Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        String expected = "Carol (ID: 201) - Manager of Sales";
-        String result = mgr.getEmployeeInfo();
-        assertEquals(expected, result);
+        assertEquals("Carol (ID: 201) - Manager of Sales", mgr.getEmployeeInfo(),
+                "use super.getEmployeeInfo() then add \" - Manager of \" and the department");
     }
-    
-    @DisplayName("getEmployeeInfo Test 2")
+
+    @DisplayName("getEmployeeInfo through an Employee reference: Employee e = new Manager(\"Dave\", 202, ...) -> \"Dave (ID: 202) - Manager of IT\"")
     @Test
     void getEmployeeInfo_Test02() {
-        Manager mgr = new Manager("Dave", 202, 85000.0, "IT", 0.20);
-        String expected = "Dave (ID: 202) - Manager of IT";
-        String result = mgr.getEmployeeInfo();
-        assertEquals(expected, result);
-    }
-    
-    @DisplayName("getEmployeeInfo Test 3")
-    @Test
-    void getEmployeeInfo_Test03() {
-        Manager mgr = new Manager("Eve", 203, 90000.0, "Marketing", 0.10);
-        String expected = "Eve (ID: 203) - Manager of Marketing";
-        String result = mgr.getEmployeeInfo();
-        assertEquals(expected, result);
-    }
-    
-    @DisplayName("canSupervise Test 1 - Can supervise HourlyEmployee")
-    @Test
-    void canSupervise_Test01() {
-        Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        HourlyEmployee emp = new HourlyEmployee("Alice", 101, 15.00, 40);
-        boolean expected = true;
-        boolean result = mgr.canSupervise(emp);
-        assertEquals(expected, result);
-    }
-    
-    @DisplayName("canSupervise Test 2 - Can supervise regular Employee")
-    @Test
-    void canSupervise_Test02() {
-        Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        Employee emp = new Employee("George", 105, 50000.0);
-        boolean expected = true;
-        boolean result = mgr.canSupervise(emp);
-        assertEquals(expected, result);
-    }
-    
-    @DisplayName("canSupervise Test 3 - Cannot supervise another Manager")
-    @Test
-    void canSupervise_Test03() {
-        Manager mgr1 = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        Manager mgr2 = new Manager("Dave", 202, 85000.0, "IT", 0.20);
-        boolean expected = false;
-        boolean result = mgr1.canSupervise(mgr2);
-        assertEquals(expected, result);
-    }
-    
-    @DisplayName("canSupervise Test 4 - Cannot supervise Executive")
-    @Test
-    void canSupervise_Test04() {
-        Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        Executive exec = new Executive("Frank", 301, 150000.0, "Operations", 0.25, 50000.0);
-        boolean expected = false;
-        boolean result = mgr.canSupervise(exec);
-        assertEquals(expected, result);
-    }
-    
-    @DisplayName("canSupervise Test 5 - Multiple HourlyEmployees")
-    @Test
-    void canSupervise_Test05() {
-        Manager mgr = new Manager("Carol", 201, 80000.0, "Sales", 0.15);
-        HourlyEmployee emp1 = new HourlyEmployee("Alice", 101, 15.00, 40);
-        HourlyEmployee emp2 = new HourlyEmployee("Bob", 102, 20.00, 45);
-        boolean result1 = mgr.canSupervise(emp1);
-        boolean result2 = mgr.canSupervise(emp2);
-        assertTrue(result1);
-        assertTrue(result2);
+        Employee e = new Manager("Dave", 202, 85000.0, "IT", 0.20);
+        assertEquals("Dave (ID: 202) - Manager of IT", e.getEmployeeInfo(),
+                "the object is a Manager, so its override runs even through an Employee variable");
+        Employee e2 = new Manager("Eve", 203, 90000.0, "Marketing", 0.10);
+        assertEquals("Eve (ID: 203) - Manager of Marketing", e2.getEmployeeInfo());
     }
 }
